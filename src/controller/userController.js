@@ -1,4 +1,3 @@
-// controllers/userController.js
 const User = require('../models/userModel');
 const mongoose = require('mongoose');
 
@@ -6,7 +5,10 @@ const createUser = async (req, res) => {
   try {
 
     const reqBody = req.body;
-    const newUser = await User.create(reqBody);
+    console.log("reqBody", reqBody)
+    const newUser = (await User.create(reqBody)).toObject();
+
+    delete newUser.password
 
     res.status(201).json(newUser);
   } catch (error) {
@@ -16,7 +18,7 @@ const createUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select({password:0, __v: 0})
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -31,7 +33,7 @@ const getUserById = async (req, res) => {
         return res.status(400).json({ error: 'Invalid user ID' });
       }
   
-      const userDetails = await User.findById({ _id: userId });
+      const userDetails = await User.findById({ _id: userId }).select({password:0, __v: 0});
   
       if (!userDetails) {
         return res.status(404).json({ error: 'User not found' });
@@ -57,7 +59,7 @@ const getUserById = async (req, res) => {
         userId,
         { name, email, age, country },
         { new: true, runValidators: true }
-      );
+      ).select({password:0, __v: 0});
   
       if (!updatedUser) {
         return res.status(404).json({ error: 'User not found' });

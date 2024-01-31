@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const userRoutes = require('./src/controller/routes/userRoutes');
 const userRoutes = require("./src/routes/userRoutes")
 const authMiddleware = require('./src/middleware/authMiddleware');
 
@@ -11,13 +10,12 @@ const PORT = 3001;
 
 app.use(bodyParser.json());
 
+mongoose.connect("mongodb+srv://dhiraj579:dhiraj579@cluster0.grf2f7z.mongodb.net/UserCollection", { useNewUrlParser: true })
+    .then(() => console.log('mongodb running perfectly on 27017'))
+    .catch(err => console.log(err))
+
 // apply Global Middleware
 app.use(authMiddleware);
-
-mongoose.connect('mongodb://localhost:27017/your-database-name', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
 app.use('/users', userRoutes);
 
